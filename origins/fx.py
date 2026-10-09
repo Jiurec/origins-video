@@ -262,10 +262,12 @@ def sample(tex, u, v):
     h, w = tex.shape[:2]
     u = np.mod(u, w)
     v = np.mod(v, h)
-    x0 = np.floor(u).astype(np.int32)
-    y0 = np.floor(v).astype(np.int32)
-    fx = (u - x0)[..., None] if tex.ndim == 3 else (u - x0)
-    fy = (v - y0)[..., None] if tex.ndim == 3 else (v - y0)
+    xf = np.floor(u)
+    yf = np.floor(v)
+    fx = (u - xf)[..., None] if tex.ndim == 3 else (u - xf)
+    fy = (v - yf)[..., None] if tex.ndim == 3 else (v - yf)
+    x0 = xf.astype(np.int32) % w  # float mod can return exactly w
+    y0 = yf.astype(np.int32) % h
     x1 = (x0 + 1) % w
     y1 = (y0 + 1) % h
     a = tex[y0, x0] * (1 - fx) + tex[y0, x1] * fx
